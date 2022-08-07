@@ -20,15 +20,5 @@ PHONY += clean
 clean:
 	$(MAKE) -C $(KDIR) M=$(PWD) clean
 
-PHONY += test
-test: build
-	sudo insmod sound/soc/bcm/snd-soc-tpa-hermes-rpi-codec.ko
-	sudo insmod sound/soc/bcm/snd-soc-tpa-hermes-rpi.ko
-	sudo dtoverlay arch/arm/boot/dts/overlays/tpa-hermes-rpi.dtbo
-	sudo dtoverlay -r tpa-hermes-rpi
-	sudo rmmod snd-soc-tpa-hermes-rpi
-	sudo rmmod snd-soc-tpa-hermes-rpi-codec
-	dmesg | tail
-
 
 .PHONY = $(PHONY)

@@ -1,27 +1,39 @@
-#include <linux/module.h>
-#include <linux/types.h>
-#include <linux/gpio/consumer.h>
-#include <linux/platform_device.h>
+/*
+ * ASoC Codec for TPA Hermes-RPi.
+ *
+ * Based on work from:
+ *  Gael Chauffaut <gael.chauffaut@gmail.com>
+ *  Florian Meier <florian.meier@koalo.de>
+ *		Copyright 2017
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * version 2 as published by the Free Software Foundation.
+ *
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ */
 
-#include <sound/core.h>
-#include <sound/pcm.h>
-#include <sound/pcm_params.h>
+#include <linux/module.h>
+#include <linux/gpio/consumer.h>
 #include <sound/soc.h>
-#include <sound/control.h>
 
 static struct gpio_descs *mult_gpios;
 static unsigned int tpa_hermes_rpi_rate;
-static unsigned int channels = 2;
+
+const unsigned int channels = 2;
+const unsigned int bclk_ratio = 32 * channels;
 
 static int snd_tpa_hermes_rpi_hw_params(struct snd_pcm_substream *substream, struct snd_pcm_hw_params *params)
 {
 	int ret = 0;
-	int width = 32;
 
 	struct snd_soc_pcm_runtime *rtd = substream->private_data;
 	tpa_hermes_rpi_rate = params_rate(params);
 
-	ret = snd_soc_dai_set_bclk_ratio(asoc_rtd_to_cpu(rtd, 0), channels * width);
+	ret = snd_soc_dai_set_bclk_ratio(asoc_rtd_to_cpu(rtd, 0), bclk_ratio);
 
 	return ret;
 }
@@ -136,7 +148,7 @@ static struct snd_soc_ops snd_tpa_hermes_rpi_ops = {
 
 static int snd_tpa_hermes_rpi_init(struct snd_soc_pcm_runtime *rtd)
 {
-	return snd_soc_dai_set_bclk_ratio(asoc_rtd_to_cpu(rtd, 0), 32 * channels);
+	return snd_soc_dai_set_bclk_ratio(asoc_rtd_to_cpu(rtd, 0), bclk_ratio);
 }
 
 SND_SOC_DAILINK_DEFS(tpa_hermes_rpi,
@@ -225,4 +237,5 @@ static struct platform_driver snd_tpa_hermes_rpi_driver = {
 
 module_platform_driver(snd_tpa_hermes_rpi_driver);
 
+MODULE_DESCRIPTION("ASoC Driver for Twisted Pear Audio Hermes-RPi");
 MODULE_LICENSE("GPL v2");
