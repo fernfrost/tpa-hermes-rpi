@@ -15,9 +15,9 @@
 	fragment@1 {
 		target-path = "/";
 		__overlay__ {
-			pcm5102a-codec {
+			tpa-hermes-rpi-codec {
 				#sound-dai-cells = <0>;
-				compatible = "ti,pcm5102a";
+				compatible = "tpa,tpa-hermes-rpi-codec";
 				status = "okay";
 			};
 		};
@@ -25,8 +25,9 @@
 
 	fragment@2 {
 		target = <&sound>;
-		__overlay__ {
+		tpa_hermes_rpi: __overlay__ {
 			compatible = "tpa,tpa-hermes-rpi";
+			mult-gpios = <&gpio 27 0>, <&gpio 22 0>, <&gpio 23 0>, <&gpio 24 0>, <&gpio 25 0>;
 			i2s-controller = <&i2s>;
 			status = "okay";
 		};
